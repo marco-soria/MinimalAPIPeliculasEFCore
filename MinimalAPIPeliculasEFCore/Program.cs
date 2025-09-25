@@ -1,9 +1,18 @@
 using Microsoft.AspNetCore.Cors;
+using Microsoft.EntityFrameworkCore;
+using MinimalAPIPeliculasEFCore;
+using MinimalAPIPeliculasEFCore.Endpoints;
 using MinimalAPIPeliculasEFCore.Entidades;
+using MinimalAPIPeliculasEFCore.Repositorios;
 
 var builder = WebApplication.CreateBuilder(args);
 var origenesPermitidos = builder.Configuration.GetValue<string>("origenespermitidos")!;
 // Services area
+
+builder.Services.AddDbContext<ApplicationDbContext>(opciones =>
+{
+    opciones.UseSqlServer("name=DefaultConnection");
+});
 
 builder.Services.AddCors(opciones =>
 {
@@ -21,6 +30,10 @@ builder.Services.AddCors(opciones =>
 builder.Services.AddOutputCache();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IRepositorioGeneros, RepositorioGeneros>();
+
+builder.Services.AddAutoMapper(c => { }, typeof(Program));
 // end of services area
 
 
@@ -38,17 +51,7 @@ app.UseOutputCache();
 
 app.MapGet("/", [EnableCors(policyName: "libre")] () => "¡Hola, mundo!");
 
-app.MapGet("/generos", () =>
-{
-    var generos = new List<Genero>
-    {
-        new() { Id = 1, Nombre = "Acción" },
-        new() { Id = 2, Nombre = "Comedia" },
-        new() { Id = 3, Nombre = "Drama" }
-    };
-
-    return generos;
-}).CacheOutput(c => c.Expire(TimeSpan.FromSeconds(15)));
+app.MapGroup("/generos").MapGeneros();
 
 //end of middleware area
 app.Run();
