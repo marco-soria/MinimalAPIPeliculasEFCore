@@ -1,16 +1,15 @@
 ﻿using MinimalAPIPeliculasEFCore.Entidades;
 
-namespace MinimalAPIPeliculasEFCore.Repositorios
+namespace MinimalAPIPeliculasEFCore.Repositorios;
+
+public interface IRepositorioGeneros
 {
-    public interface IRepositorioGeneros
-    {
-        Task<List<Genero>> ObtenerTodos();
-        Task<Genero?> ObtenerPorId(int id);
-        Task<int> Crear(Genero genero);
-        Task<bool> Existe(int id);
-        Task<bool> ExisteNombre(string nombre);
-        Task<bool> ExisteNombre(string nombre, int idExcluir);
-        Task Actualizar(Genero genero);
-        Task Borrar(int id);
-    }
+    Task<List<Genero>> ObtenerTodos();
+    Task<Genero?> ObtenerPorId(int id);
+    Task<int> Crear(Genero genero);
+    Task<bool> Existe(int id);
+    Task<List<int>> Existen(List<int> ids);
+    Task Actualizar(Genero genero);
+    Task Borrar(int id);
+    Task<bool> Existe(int id, string nombre);
 }

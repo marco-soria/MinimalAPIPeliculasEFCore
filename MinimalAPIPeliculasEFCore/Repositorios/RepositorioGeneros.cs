@@ -12,19 +12,19 @@ public class RepositorioGeneros : IRepositorioGeneros
         this.context = context;
     }
 
-    public async Task<bool> ExisteNombre(string nombre)
-    {
-        return await context.Generos.AnyAsync(x => x.Nombre.ToLower() == nombre.ToLower());
-    }
-
-    public async Task<bool> ExisteNombre(string nombre, int idExcluir)
-    {
-        return await context.Generos.AnyAsync(x => x.Nombre.ToLower() == nombre.ToLower() && x.Id != idExcluir);
-    }
-
     public async Task<bool> Existe(int id)
     {
         return await context.Generos.AnyAsync(x => x.Id == id);
+    }
+
+    public async Task<bool> Existe(int id, string nombre)
+    {
+        return await context.Generos.AnyAsync(g => g.Id != id && g.Nombre == nombre);
+    }
+
+    public async Task<List<int>> Existen(List<int> ids)
+    {
+        return await context.Generos.Where(g => ids.Contains(g.Id)).Select(g => g.Id).ToListAsync();
     }
 
     public async Task<Genero?> ObtenerPorId(int id)
